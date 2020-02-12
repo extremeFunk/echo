@@ -1,11 +1,6 @@
-def ec2Url = "ubuntu@ec2-13-48-248-68.eu-north-1.compute.amazonaws.com"
-def ecrUrl = "860280202050.dkr.ecr.eu-north-1.amazonaws.com/toxic"
 def TAG
 pipeline {
     agent any
-    tools {
-        maven 'maven-tool'
-    }
     stages {
         stage('build') {
             steps {
