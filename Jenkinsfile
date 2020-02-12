@@ -37,11 +37,8 @@ pipeline {
                 echo '###                        publish                     ###'
                 echo '##########################################################'
 
-//                 sh 'gcloud iam service-accounts keys \
-//                     create /var/jenkins_homegcp_crd.json \
-//                     --iam-account rainrobot@echo-final-project.iam.gserviceaccount.com'
-                sh 'gcloud auth configure-docker'
-                sh "docker push us.gcr.io/echo:${TAG}"
+                sh 'gcloud auth configure-docker > /dev/null'
+                sh "docker push us.gcr.io/echo-final-project/echo:${TAG}"
             }
         }
     }
