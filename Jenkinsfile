@@ -1,11 +1,6 @@
-def ec2Url = "ubuntu@ec2-13-48-248-68.eu-north-1.compute.amazonaws.com"
-def ecrUrl = "860280202050.dkr.ecr.eu-north-1.amazonaws.com/toxic"
 def TAG
 pipeline {
     agent any
-    tools {
-        maven 'maven-tool'
-    }
     stages {
         stage('build') {
             steps {
@@ -15,16 +10,16 @@ pipeline {
 
                 script {
                    if (env.BRANCH_NAME == 'master') {
-                       TAG = '1.0.${JENKINS_BUILD_NUMBER}'
+                       TAG = "1.0.${BUILD_NUMBER}"
                    }
                    else if (env.BRANCH_NAME == 'dev') {
-                       TAG ='dev-${GIT_COMMIT_HASH}'
+                       TAG ="dev-${GIT_COMMIT}"
                    }
                    else if (env.BRANCH_NAME == 'staging') {
-                       TAG ='staging-${GIT_COMMIT_HASH}'
+                       TAG ="staging-${GIT_COMMIT}"
                    }
                    echo "This is the img tag ${TAG}"
-                   sh "docker build -t us.gcr.io/echo:${TAG} ."
+                   sh "docker build -t us.gcr.io/echo-final-project/echo:${TAG} ."
                 }
             }
         }
@@ -33,20 +28,17 @@ pipeline {
                 echo '##########################################################'
                 echo '###                        test                        ###'
                 echo '##########################################################'
-                echo 'no test yet'
+                echo 'no test for now'
             }
         }
         stage('publish') {
-            when { branch 'master' }
             steps {
                 echo '##########################################################'
                 echo '###                        publish                     ###'
                 echo '##########################################################'
 
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-iam']]) {
-                    sh '$(aws ecr get-login --no-include-email --region eu-north-1)'
-                }
-                sh "docker push us.gcr.io/echo:${TAG}"
+                sh 'gcloud auth configure-docker > /dev/null'
+                sh "docker push us.gcr.io/echo-final-project/echo:${TAG}"
             }
         }
     }
