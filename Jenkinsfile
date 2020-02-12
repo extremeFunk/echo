@@ -32,7 +32,6 @@ pipeline {
             }
         }
         stage('publish') {
-            when { branch 'master' }
             steps {
                 echo '##########################################################'
                 echo '###                        publish                     ###'
