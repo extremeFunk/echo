@@ -10,7 +10,7 @@ pipeline {
 
                 script {
                    if (env.BRANCH_NAME == 'master') {
-                       TAG = '1.0.${JENKINS_BUILD_NUMBER}'
+                       TAG = '1.0.${BUILD_NUMBER}'
                    }
                    else if (env.BRANCH_NAME == 'dev') {
                        TAG ='dev-${GIT_COMMIT_HASH}'
@@ -28,7 +28,7 @@ pipeline {
                 echo '##########################################################'
                 echo '###                        test                        ###'
                 echo '##########################################################'
-                echo 'no test yet'
+                echo 'no test for now'
             }
         }
         stage('publish') {
@@ -38,9 +38,9 @@ pipeline {
                 echo '###                        publish                     ###'
                 echo '##########################################################'
 
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-iam']]) {
-                    sh '$(aws ecr get-login --no-include-email --region eu-north-1)'
-                }
+                sh 'gcloud iam service-accounts keys \
+                    create /var/jenkins_homegcp_crd.json \
+                    --iam-account rainrobot@echo-final-project.iam.gserviceaccount.com'
                 sh "docker push us.gcr.io/echo:${TAG}"
             }
         }
